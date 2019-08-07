@@ -10,8 +10,11 @@ import net.corda.core.contracts.Issued
 import net.corda.core.crypto.NullKeys
 import net.corda.core.identity.AnonymousParty
 import java.time.Instant
+import net.corda.core.contracts.CommandAndState
 import net.corda.core.identity.Party
+import com.template.Commands
 import java.util.*
+import net.corda.core.contracts.OwnableState
 
 // *********
 // * State *
@@ -22,11 +25,11 @@ data class CommercialState(
                             val issuance : PartyAndReference,
                             override val owner : AbstractParty,
                             val faceValue : Amount<Issued<Currency>>,
-                            val maturityDate : Instant): ContractState{
+                            val maturityDate : Instant): OwnableState{
 
     override val participants = listOf(owner)
 
     fun withoutOwner() = copy(owner = AnonymousParty(NullKeys.NullPublicKey))
 
-    override fun withNewOwner(newOwner : AbstractParty) = 
+    override fun withNewOwner(newOwner: AbstractParty) = CommandAndState(Commands.Move(), copy(owner = newOwner))
 }
